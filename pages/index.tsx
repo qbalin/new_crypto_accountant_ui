@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import {Button} from 'react-bootstrap'
 
 export default function Home() {
   return (
@@ -8,6 +9,7 @@ export default function Home() {
       </Head>
 
       <main>
+        <Button>Clik</Button>
       </main>
 
       <style jsx>{`
