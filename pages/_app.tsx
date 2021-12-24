@@ -1,4 +1,5 @@
 import { AppProps } from 'next/app'
+import Head from 'next/head'
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import NextLink from 'next/link';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -13,6 +14,9 @@ const Link = ({children, href}) =>
 export default function App({ Component, pageProps } : AppProps) {
   return (
       <div>
+        <Head>
+          <title>New Crypto Accountant</title>
+        </Head>
         <Navbar bg="light" expand="lg">
           <Container>
             <Navbar.Brand href="#home">New Crypto Accountant</Navbar.Brand>
