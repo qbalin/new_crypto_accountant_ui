@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div className="container">
       <main>
-        <Button>Clik</Button>
+        Soon, a way to do your crypto taxes for free!
       </main>
 
       <style jsx>{`
