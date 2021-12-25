@@ -1,4 +1,4 @@
-import { db, SupportedPlatforms } from "../lib/db";
+import { db, SupportedBlockchains, SupportedPlatforms } from "../lib/db";
 import { Button } from "react-bootstrap";
 import { useLiveQuery } from 'dexie-react-hooks/dist/dexie-react-hooks.mjs'
 import { Accordion, Card, Modal, Table } from "react-bootstrap";
@@ -9,6 +9,7 @@ import { useState } from "react";
 const accountsAvailable = {
   [SupportedPlatforms.Coinbase]: {
     platform: SupportedPlatforms.Coinbase,
+    subType: 'centralized',
     name: 'Coinbase Pro',
     fields: [
       {name: 'nickname', label: 'Unique account nickname'},
@@ -17,6 +18,17 @@ const accountsAvailable = {
       {name: 'privateApiPassphrase', label: 'Private API passphrase'}
     ],
     iconPath: '/images/coinbase_pro_logo.svg',
+  },
+  [SupportedBlockchains.Ethereum]: {
+    platform: SupportedBlockchains.Ethereum,
+    subType: 'decentralized',
+    name: 'Ethereum',
+    fields: [
+      {name: 'nickname', label: 'Unique account nickname'},
+      {name: 'blockchainExplorerApiKey', label: 'Blockchain explorer API key'},
+      {name: 'walletAddress', label: 'Wallet Address'},
+    ],
+    iconPath: '/images/ethereum_logo.png',
   },
 }
 
@@ -39,19 +51,19 @@ const Accounts = () => {
     setShowConfirmation(true);
   };
   const handleAccountDeletion = () => {
-    db.centralizedAccounts.delete(accoundIdForDeletion);
+    db.accounts.delete(accoundIdForDeletion);
     setShowConfirmation(false);
   }
 
-  const centralizedAccounts = useLiveQuery(
-    () => db.centralizedAccounts.toArray()
+  const accounts = useLiveQuery(
+    () => db.accounts.toArray()
   );
 
   const displayAccounts = () => {
-    if (centralizedAccounts?.length) {
+    if (accounts?.length) {
       return <Accordion>
-        {centralizedAccounts.map((account, index) => {
-          const accountType = accountsAvailable[account.platformName];
+        {accounts.map((account, index) => {
+          const accountType = accountsAvailable[account.platformName] || accountsAvailable[account.blockchainName];
           return (
             <Accordion.Item key={account.id} eventKey={index}>
               <Accordion.Header>
@@ -116,13 +128,22 @@ const Accounts = () => {
           return errors;
         }}
         onSubmit={ async (values, { setFieldError }) => {
-          db.centralizedAccounts.add({ ...values, platformName })
+          let platformOrBlockchain: { platformName?: string, blockchainName?: string } = {};
+          if (accountType.subType === 'centralized') {
+            platformOrBlockchain.platformName = platformName
+          } else {
+            platformOrBlockchain.blockchainName = platformName
+          }
+
+          db.accounts.add({ ...values, ...platformOrBlockchain })
             .then(handleClose)
             .catch((error) => {
               if (error.message.match(/Unable to add key to index 'nickname': at least one key does not satisfy the uniqueness requirements./)) {
                 setFieldError('nickname', 'Choose a unique nickname accross all your accounts');
               } else if (error.message.match(/Unable to add key to index '\[platformName\+privateApiKey\+privateApiPassphrase\+privateApiSecret\]': at least one key does not satisfy the uniqueness requirements./)) {
-                setFieldError('privateApiKey', 'You already registered this account.');
+                setFieldError('nickname', 'You already registered this account.');
+              } else if (error.message.match(/Unable to add key to index '\[walletAddress\+blockchainName\+blockchainExplorerApiKey\]': at least one key does not satisfy the uniqueness requirements./)) {
+                setFieldError('nickname', 'You already registered this account.');
               } else {
                 throw error;
               }

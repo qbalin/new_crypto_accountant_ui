@@ -5,23 +5,29 @@ import 'fake-indexeddb/auto';
 export enum SupportedPlatforms {
   Coinbase = 'Coinbase'
 }
+export enum SupportedBlockchains {
+  Ethereum = 'Ethereum'
+}
 
-export interface CentralizedAccount {
+export interface Account {
   id?: number;
-  platformName: SupportedPlatforms,
-  privateApiKey: string,
+  platformName?: SupportedPlatforms,
+  privateApiKey?: string,
   privateApiPassphrase?: string,
   privateApiSecret?: string,
-  nickname: string
+  nickname: string,
+  walletAddress?: string,
+  blockchainName?: SupportedBlockchains,
+  blockchainExplorerApiKey?: string,
 }
 
 export class SubClassedDexie extends Dexie {
-  centralizedAccounts!: Table<CentralizedAccount>;
+  accounts!: Table<Account>;
 
   constructor() {
     super('database');
     this.version(1).stores({
-      centralizedAccounts: '++id, platformName, &nickname, &[platformName+privateApiKey+privateApiPassphrase+privateApiSecret]' // Primary key and indexed props
+      accounts: '++id, &nickname, &[platformName+privateApiKey+privateApiPassphrase+privateApiSecret], &[walletAddress+blockchainName+blockchainExplorerApiKey]'
     });
   }
 }
