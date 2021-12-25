@@ -3,7 +3,8 @@ import Dexie, { Table } from 'dexie';
 import 'fake-indexeddb/auto';
 
 export enum SupportedPlatforms {
-  Coinbase = 'Coinbase'
+  Coinbase = 'Coinbase',
+  Kucoin = 'Kucoin',
 }
 export enum SupportedBlockchains {
   Ethereum = 'Ethereum'

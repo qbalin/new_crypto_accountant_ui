@@ -19,6 +19,18 @@ const accountsAvailable = {
     ],
     iconPath: '/images/coinbase_pro_logo.svg',
   },
+  [SupportedPlatforms.Kucoin]: {
+    platform: SupportedPlatforms.Kucoin,
+    subType: 'centralized',
+    name: 'Kucoin',
+    fields: [
+      {name: 'nickname', label: 'Unique account nickname'},
+      {name: 'privateApiKey', label: 'Private API key'},
+      {name: 'privateApiSecret', label: 'Private API secret'},
+      {name: 'privateApiPassphrase', label: 'Private API passphrase'}
+    ],
+    iconPath: '/images/kucoin_logo.png',
+  },
   [SupportedBlockchains.Ethereum]: {
     platform: SupportedBlockchains.Ethereum,
     subType: 'decentralized',
