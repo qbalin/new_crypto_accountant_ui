@@ -26,7 +26,7 @@ export class SubClassedDexie extends Dexie {
 
   constructor() {
     super('database');
-    this.version(1).stores({
+    this.version(2).stores({
       accounts: '++id, &nickname, &[platformName+privateApiKey+privateApiPassphrase+privateApiSecret], &[walletAddress+blockchainName+blockchainExplorerApiKey]'
     });
   }
