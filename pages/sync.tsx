@@ -1,9 +1,6 @@
 import { db } from "../lib/db";
 import { Button, Table } from "react-bootstrap";
 import { useLiveQuery } from 'dexie-react-hooks/dist/dexie-react-hooks.mjs'
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import Image from "next/image";
-import { useState } from "react";
 import { Account } from "../lib/account";
 import { SupportedBlockchain, SupportedPlatform } from "@qbalin/new_crypto_accountant_utils";
 
@@ -41,13 +38,15 @@ const Sync = () => {
   const displayAccounts = () => {
     if (normalTransactions) {
       return <Table striped bordered>
-        {
-          normalTransactions.map(t =>
-            <tr key={t.hash}>
-              {Object.values(t).map(v => <td key={v as string}>{v}</td>)}
-            </tr>
-          )
-        }
+        <tbody>
+          {
+            normalTransactions.map(t =>
+              <tr key={t.hash}>
+                {Object.values(t).map(v => <td key={v as string}>{v}</td>)}
+              </tr>
+            )
+          }
+        </tbody>
       </Table>
     }
     return null;
