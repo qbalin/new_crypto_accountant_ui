@@ -1,14 +1,15 @@
-import { db, SupportedBlockchains, SupportedPlatforms } from "../lib/db";
+import { db } from "../lib/db";
 import { Button } from "react-bootstrap";
 import { useLiveQuery } from 'dexie-react-hooks/dist/dexie-react-hooks.mjs'
 import { Accordion, Card, Modal, Table } from "react-bootstrap";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import Image from "next/image";
 import { useState } from "react";
+import { SupportedBlockchain, SupportedPlatform } from "@qbalin/new_crypto_accountant_utils";
 
 const accountsAvailable = {
-  [SupportedPlatforms.Coinbase]: {
-    platform: SupportedPlatforms.Coinbase,
+  [SupportedPlatform.Coinbase]: {
+    platform: SupportedPlatform.Coinbase,
     subType: 'centralized',
     name: 'Coinbase Pro',
     fields: [
@@ -19,8 +20,8 @@ const accountsAvailable = {
     ],
     iconPath: '/images/coinbase_pro_logo.svg',
   },
-  [SupportedPlatforms.Kucoin]: {
-    platform: SupportedPlatforms.Kucoin,
+  [SupportedPlatform.KuCoin]: {
+    platform: SupportedPlatform.KuCoin,
     subType: 'centralized',
     name: 'Kucoin',
     fields: [
@@ -31,8 +32,8 @@ const accountsAvailable = {
     ],
     iconPath: '/images/kucoin_logo.png',
   },
-  [SupportedBlockchains.Ethereum]: {
-    platform: SupportedBlockchains.Ethereum,
+  [SupportedBlockchain.Ethereum]: {
+    platform: SupportedBlockchain.Ethereum,
     subType: 'decentralized',
     name: 'Ethereum',
     fields: [
@@ -80,7 +81,7 @@ const Accounts = () => {
             <Accordion.Item key={account.id} eventKey={index}>
               <Accordion.Header>
                 <span className="mx-2">
-                  <Image src={accountType.iconPath} width={32} height={32}/>
+                  <Image src={accountType.iconPath} width={32} height={32} alt=""/>
                 </span>
                 {account.nickname}
               </Accordion.Header>
@@ -195,12 +196,12 @@ const Accounts = () => {
       <h2>Add accounts</h2>
       {
         Object.values(accountsAvailable).map(accountAvailable => {
-          return <>
-            <Card key={accountAvailable.platform} className="my-2">
+          return <div key={accountAvailable.platform}>
+            <Card className="my-2">
               <Card.Body>
                 <Card.Title className="d-flex align-items-center">
                   <span className="mx-2">
-                    <Image src={accountAvailable.iconPath} width={32} height={32}/>
+                    <Image src={accountAvailable.iconPath} width={32} height={32} alt=""/>
                   </span>
                   <span className="align-self-center">{accountAvailable.name}</span>
                   <Button className="ms-auto" variant="dark" onClick={() => handleShow(accountAvailable.platform)}>
@@ -209,7 +210,7 @@ const Accounts = () => {
                 </Card.Title>
               </Card.Body>
             </Card>
-          </>
+          </div>
         })
       }
       <Modal show={show} onHide={handleClose}>
