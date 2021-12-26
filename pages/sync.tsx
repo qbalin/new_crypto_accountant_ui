@@ -44,7 +44,7 @@ const Sync = () => {
         {
           normalTransactions.map(t =>
             <tr key={t.hash}>
-              {Object.values(t).map(v => <td>{v}</td>)}
+              {Object.values(t).map(v => <td key={v as string}>{v}</td>)}
             </tr>
           )
         }
