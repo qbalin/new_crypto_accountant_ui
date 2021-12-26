@@ -7,7 +7,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@qbalin/new_crypto_accountant_utils": "qbalin/new_crypto_accountant_utils",
+    "@qbalin/new_crypto_accountant_utils": "^1.0.1",
     "bootstrap": "5.1.3",
     "dexie": "^3.2.0",
     "dexie-react-hooks": "^1.1.1",
