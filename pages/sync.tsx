@@ -3,6 +3,8 @@ import { Button, Table } from "react-bootstrap";
 import { useLiveQuery } from 'dexie-react-hooks/dist/dexie-react-hooks.mjs'
 import { Account } from "../lib/account";
 import { SupportedBlockchain, SupportedPlatform } from "@qbalin/new_crypto_accountant_utils";
+import syncEtherscanLikeData from "../lib/etherscan_like/sync";
+import syncKucoinData from "../lib/kucoin/sync";
 
 const Sync = () => {
   const accounts = useLiveQuery(
@@ -20,16 +22,11 @@ const Sync = () => {
       for (let i = 0; i < accounts.length; i += 1) {
         const account = accounts[i] as Account;
 
-        // if (account.platformName === SupportedPlatform.KuCoin) {
-        //   const results = await fetch('/api/kucoin_data').then(res => res.json());
-        //   db.kucoinLedgerEntries.bulkAdd(results.ledgers.map(r => ({...r, uiAccountId: account.id})));
-        // }
+        if (account.platformName === SupportedPlatform.KuCoin) {
+          syncKucoinData(account)
+        }
         if (account.blockchainName === SupportedBlockchain.Ethereum) {
-          const results = await fetch(`/api/etherscan_data?apiKey=${account.blockchainExplorerApiKey}&walletAddress=${account.walletAddress}`).then(res => res.json());
-          db.etherscanLikeNormalTransactions.bulkAdd(results.normalTransactions.map(t => ({...t, uiAccountId: account.id })));
-          debugger;
-          db.etherscanLikeInternalTransactions.bulkAdd(results.internalTransactions.map(t => ({...t, uiAccountId: account.id })));
-          db.etherscanLikeTokenTransactions.bulkAdd(results.tokenTransactions.map(t => ({...t, uiAccountId: account.id })));
+          syncEtherscanLikeData(account);
         }
       }
     }
@@ -54,7 +51,7 @@ const Sync = () => {
 
   return <>
     <Button variant="dark" onClick={syncAccounts}>Sync accounts</Button>
-    {displayAccounts()}
+    {/* {displayAccounts()} */}
   </>
 }
 
