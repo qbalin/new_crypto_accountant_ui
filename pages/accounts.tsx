@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks/dist/dexie-react-hooks.mjs'
 import { Accordion, Card, Modal, Table } from "react-bootstrap";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { SupportedBlockchain, SupportedPlatform } from "@qbalin/new_crypto_accountant_utils";
 
@@ -84,6 +85,11 @@ const Accounts = () => {
                   <Image src={accountType.iconPath} width={32} height={32} alt=""/>
                 </span>
                 {account.nickname}
+                <Link href={`/raw_data/${account.id}`}>
+                  <Button className="ms-auto" variant="dark">
+                    Raw Data
+                  </Button>
+                </Link>
               </Accordion.Header>
               <Accordion.Body>
                 <Table striped bordered hover>
