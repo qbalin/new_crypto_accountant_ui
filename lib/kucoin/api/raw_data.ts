@@ -1,6 +1,6 @@
 import { KucoinClient } from '@qbalin/new_crypto_accountant_utils';
 
-export default async function handler(req, res) {
+export default async function kucoinRawDataHandler(req, res) {
   const secret = req.query.privateApiSecret as string;
   const apiKey = req.query.privateApiKey as string;
   const apiPassphrase = req.query.privateApiPassphrase as string;

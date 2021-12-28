@@ -2,10 +2,10 @@
 import Dexie, { Table } from 'dexie';
 import 'fake-indexeddb/auto';
 import { Account, accountIndices } from './account';
-import { KucoinLedgerEntry, kucoinLedgerEntryIndices } from './kucoin/ledger_entry';
-import { EtherscanLikeNormalTransaction, etherscanLikeNormalTransactionIndices } from './etherscan_like/normal_transaction';
-import { EtherscanLikeInternalTransaction, etherscanLikeInternalTransactionIndices } from './etherscan_like/internal_transaction';
-import { EtherscanLikeTokenTransaction, etherscanLikeTokenTransactionIndices } from './etherscan_like/token_transaction';
+import { KucoinLedgerEntry, kucoinLedgerEntryIndices } from './kucoin/models/ledger_entry';
+import { EtherscanLikeNormalTransaction, etherscanLikeNormalTransactionIndices } from './etherscan/models/normal_transaction';
+import { EtherscanLikeInternalTransaction, etherscanLikeInternalTransactionIndices } from './etherscan/models/internal_transaction';
+import { EtherscanLikeTokenTransaction, etherscanLikeTokenTransactionIndices } from './etherscan/models/token_transaction';
 
 export class SubClassedDexie extends Dexie {
   accounts!: Table<Account>;

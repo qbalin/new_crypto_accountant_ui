@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { EtherscanClient, SupportedBlockchain } from '@qbalin/new_crypto_accountant_utils';
+import { EtherscanClient } from '@qbalin/new_crypto_accountant_utils';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function etherscanRawDataHandler(req: NextApiRequest, res: NextApiResponse) {
   const etherscanLikeApiKey = req.query.apiKey as string;
   const walletAddress = req.query.walletAddress as string;
 

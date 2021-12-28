@@ -1,3 +1,4 @@
+import { SupportedPlatform } from "@qbalin/new_crypto_accountant_utils";
 import { Account } from "../account";
 import { db } from "../db";
 
@@ -21,7 +22,7 @@ const syncKucoinData = async (account: Account, since?: Date) => {
 
   for (let i = intervalsToFetch.length - 1; i >= 0; i -= 1) {
     const interval = intervalsToFetch[i];
-    const results = await fetch(`/api/kucoin_data?privateApiKey=${account.privateApiKey}&privateApiPassphrase=${account.privateApiPassphrase}&privateApiSecret=${account.privateApiSecret}&since=${interval.since}&until=${interval.until}`).then(res => res.json());
+    const results = await fetch(`/api/raw_data/${SupportedPlatform.KuCoin}?privateApiKey=${account.privateApiKey}&privateApiPassphrase=${account.privateApiPassphrase}&privateApiSecret=${account.privateApiSecret}&since=${interval.since}&until=${interval.until}`).then(res => res.json());
     const ledgerEntriesWithAccountId = results.ledgers.map(l => ({ ...l, uiAccountId: account.id }));
 
     await db.kucoinLedgerEntries.bulkAdd(ledgerEntriesWithAccountId).catch(error => {
@@ -33,4 +34,17 @@ const syncKucoinData = async (account: Account, since?: Date) => {
   }
 }
 
-export default syncKucoinData;
+const deleteKucoinAccount = async (accountId) => {
+  return db.transaction('rw', db.accounts, db.kucoinLedgerEntries, async () => {
+    await db.accounts.delete(accountId);
+    await db.kucoinLedgerEntries.where({ uiAccountId: accountId }).delete();
+  });
+}
+
+const purgeKucoinAccountData = async (accountId) => {
+  return db.transaction('rw', db.kucoinLedgerEntries, async () => {
+    await db.kucoinLedgerEntries.where({ uiAccountId: accountId }).delete();
+  });
+}
+
+export { syncKucoinData, deleteKucoinAccount, purgeKucoinAccountData };

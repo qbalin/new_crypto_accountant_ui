@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { SupportedBlockchain, SupportedPlatform } from "@qbalin/new_crypto_accountant_utils";
+import { deleteAccount } from "../lib/account_data";
 
 const accountsAvailable = {
   [SupportedPlatform.Coinbase]: {
@@ -48,10 +49,9 @@ const accountsAvailable = {
 
 const Accounts = () => {
   const [show, setShow] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showDeletionConfirmation, setShowDeletionConfirmation] = useState(false);
   const [accountType, setAccountType] = useState(Object.values(accountsAvailable)[0]);
-  const [accoundIdForDeletion, setAccoundIdForDeletion] = useState(-1);
-
+  const [accountIdForDeletion, setAccountIdForDeletion] = useState(-1);
 
   const handleClose = () => setShow(false);
   const handleShow = (platform) => {
@@ -59,14 +59,15 @@ const Accounts = () => {
     setAccountType(accountAvailable);
     setShow(true)
   };
-  const handleCloseConfirmation = () => setShowConfirmation(false);
-  const handleShowConfirmation = (accountId) => {
-    setAccoundIdForDeletion(accountId);
-    setShowConfirmation(true);
+
+  const handleCloseDeletionConfirmation = () => setShowDeletionConfirmation(false);
+  const handleShowDeletionConfirmation = (accountId) => {
+    setAccountIdForDeletion(accountId);
+    setShowDeletionConfirmation(true);
   };
-  const handleAccountDeletion = () => {
-    db.accounts.delete(accoundIdForDeletion);
-    setShowConfirmation(false);
+  const handleAccountDeletion = async () => {
+    await deleteAccount(accountIdForDeletion)
+    setShowDeletionConfirmation(false);
   }
 
   const accounts = useLiveQuery(
@@ -103,7 +104,7 @@ const Accounts = () => {
                   </tbody>
                 </Table>
                 <div className="d-flex">
-                  <Button variant="danger" onClick={() => handleShowConfirmation(account.id)}>Delete</Button>
+                  <Button variant="danger" onClick={() => handleShowDeletionConfirmation(account.id)}>Delete</Button>
                   <Link href={`/raw_data/${account.id}`} passHref>
                     <Button className="ms-auto" variant="dark">
                       Raw Data
@@ -226,12 +227,12 @@ const Accounts = () => {
           accountInputForm()
         }
       </Modal>
-      <Modal show={showConfirmation} onHide={handleCloseConfirmation}>
+      <Modal show={showDeletionConfirmation} onHide={handleCloseDeletionConfirmation}>
         <Modal.Header closeButton>
           <Modal.Title>Are you sure?</Modal.Title>
         </Modal.Header>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseConfirmation}>
+          <Button variant="secondary" onClick={handleCloseDeletionConfirmation}>
             No
           </Button>
           <Button variant="dark" onClick={handleAccountDeletion}>
