@@ -88,7 +88,7 @@ const Accounts = () => {
   const displayAccounts = () => {
     if (accounts?.length) {
       return <Accordion>
-        {accounts.map((account, index) => {
+        {accounts.sort((a, b) => (a.blockchainName || a.platformName).localeCompare(b.blockchainName || b.platformName)).map((account, index) => {
           const accountType = accountsAvailable[account.platformName] || accountsAvailable[account.blockchainName];
           return (
             <Accordion.Item key={account.id} eventKey={index}>
