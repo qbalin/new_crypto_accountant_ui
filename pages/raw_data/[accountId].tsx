@@ -1,14 +1,22 @@
+import { SupportedPlatform } from '@qbalin/new_crypto_accountant_utils';
 import { useLiveQuery } from 'dexie-react-hooks/dist/dexie-react-hooks.mjs'
-import { useState } from 'react';
 import { db } from "../../lib/db";
+import KucoinRawData from './kucoin';
 
 const RawData = ({ accountId }) => {
   const account = useLiveQuery(
     () => accountId && db.accounts.get(parseInt(accountId, 10)), [accountId]
   );
 
+  if (!account) {
+    return null;
+  }
 
-  return JSON.stringify(account || '');
+  if (account.platformName === SupportedPlatform.KuCoin) {
+    return <KucoinRawData accountId={account.id}/>;
+  }
+
+  return null;
 }
 
 const getAllAccountIds = async () => {
@@ -28,8 +36,6 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-
-
   return {
     props: {
       accountId: params.accountId
