@@ -2,14 +2,17 @@ import { SupportedBlockchain, SupportedPlatform } from "@qbalin/new_crypto_accou
 import { Account } from "./account";
 import { db } from "./db";
 
-import { syncEtherscanLikeData, deleteEtherscanLikeAccount, purgeEtherscanLikeAccountData } from "./etherscan/account_data";
+import { syncEthereumData, deleteEthereumAccount, purgeEthereumAccountData } from "./etherscan/account_data";
+import { syncPolygonData, deletePolygonAccount, purgePolygonAccountData } from "./polygonscan/account_data";
 import { syncKucoinData, deleteKucoinAccount, purgeKucoinAccountData } from "./kucoin/account_data";
 
 export async function syncAccount(account: Account) {
   if (account.platformName === SupportedPlatform.KuCoin) {
     syncKucoinData(account);
   } else if (account.blockchainName === SupportedBlockchain.Ethereum) {
-    syncEtherscanLikeData(account);
+    syncEthereumData(account);
+  } else if (account.blockchainName === SupportedBlockchain.Polygon) {
+    syncPolygonData(account);
   } else {
     throw new Error(`syncAccount unimplemented for ${account.blockchainName || account.platformName}`);
   }
@@ -20,7 +23,9 @@ export async function deleteAccount(accountId) {
   if (account.platformName === SupportedPlatform.KuCoin) {
     return deleteKucoinAccount(accountId);
   } else if (account.blockchainName === SupportedBlockchain.Ethereum) {
-    return deleteEtherscanLikeAccount(accountId);
+    return deleteEthereumAccount(accountId);
+  } else if (account.blockchainName === SupportedBlockchain.Polygon) {
+    return deletePolygonAccount(accountId);
   } else {
     throw new Error(`deleteAccount unimplemented for ${account.blockchainName || account.platformName}`);
   }
@@ -31,7 +36,9 @@ export async function purgeAccountData(accountId) {
   if (account.platformName === SupportedPlatform.KuCoin) {
     purgeKucoinAccountData(accountId);
   } else if (account.blockchainName === SupportedBlockchain.Ethereum) {
-    purgeEtherscanLikeAccountData(accountId);
+    purgeEthereumAccountData(accountId);
+  } else if (account.blockchainName === SupportedBlockchain.Polygon) {
+    purgePolygonAccountData(accountId);
   } else {
     throw new Error(`deleteAccount unimplemented for ${account.blockchainName || account.platformName}`);
   }

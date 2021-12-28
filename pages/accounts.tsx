@@ -45,6 +45,17 @@ const accountsAvailable = {
     ],
     iconPath: '/images/ethereum_logo.png',
   },
+  [SupportedBlockchain.Polygon]: {
+    platform: SupportedBlockchain.Polygon,
+    subType: 'decentralized',
+    name: 'Polygon',
+    fields: [
+      {name: 'nickname', label: 'Unique account nickname'},
+      {name: 'blockchainExplorerApiKey', label: 'Blockchain explorer API key'},
+      {name: 'walletAddress', label: 'Wallet Address'},
+    ],
+    iconPath: '/images/polygon_logo.png',
+  },
 }
 
 const Accounts = () => {
