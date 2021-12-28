@@ -4,9 +4,10 @@ export default async function handler(req, res) {
   const secret = req.query.privateApiSecret as string;
   const apiKey = req.query.privateApiKey as string;
   const apiPassphrase = req.query.privateApiPassphrase as string;
-  const since = new Date(req.query.fetchFrom);
+  const since = new Date(parseInt(req.query.since, 10));
+  const until = new Date(parseInt(req.query.until, 10));
 
   const client = new KucoinClient({ secret, apiKey, apiPassphrase });
-  const ledgers = await client.ledgers({ since });
+  const ledgers = await client.ledgers({ since, until });
   res.status(200).json({ ledgers })
 }

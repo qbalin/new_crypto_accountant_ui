@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks/dist/dexie-react-hooks.mjs';
-import { Table } from 'react-bootstrap';
+import { Table, Accordion } from 'react-bootstrap';
 import { db } from "../../lib/db";
 
 const KucoinRawData = ({ accountId }) => {
@@ -11,20 +11,35 @@ const KucoinRawData = ({ accountId }) => {
     return null;
   }
 
-  const headers = Object.keys(ledgerEntries[0]);
+  const filteredData = ledgerEntries.map(entry => {
+    const newEntry = {...entry};
+    delete newEntry.uiAccountId;
+    return newEntry;
+  })
 
-  return <Table striped>
-    <thead>
-      <tr>
-        {headers.map(header => <th key={header}>{header}</th>)}
-      </tr>
-    </thead>
-    <tbody>
-      {ledgerEntries.map(entry => <tr key={Object.values(entry).join('-')}>
-        {Object.values(entry).map(value => <td key={Object.values(entry).join('+') + value}>{value}</td>)}
-      </tr>)}
-    </tbody>
-  </Table>
+  const headers = Object.keys(filteredData[0]);
+
+  return <Accordion>
+    <Accordion.Item key={1} eventKey="1">
+      <Accordion.Header>
+        Ledger entries ({filteredData.length})
+      </Accordion.Header>
+      <Accordion.Body>
+        <Table striped hover responsive>
+          <thead>
+            <tr>
+              {headers.map(header => <th key={header}>{header}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {filteredData.map(entry => <tr key={Object.values(entry).join('-')}>
+              {Object.values(entry).map((value, index) => <td key={headers[index]}>{value}</td>)}
+            </tr>)}
+          </tbody>
+        </Table>
+      </Accordion.Body>
+    </Accordion.Item>
+  </Accordion>
 }
 
 export default KucoinRawData;

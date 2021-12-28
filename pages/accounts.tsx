@@ -85,11 +85,6 @@ const Accounts = () => {
                   <Image src={accountType.iconPath} width={32} height={32} alt=""/>
                 </span>
                 {account.nickname}
-                <Link href={`/raw_data/${account.id}`}>
-                  <Button className="ms-auto" variant="dark">
-                    Raw Data
-                  </Button>
-                </Link>
               </Accordion.Header>
               <Accordion.Body>
                 <Table striped bordered hover>
@@ -107,7 +102,14 @@ const Accounts = () => {
                     }
                   </tbody>
                 </Table>
-                <Button variant="danger" onClick={() => handleShowConfirmation(account.id)}>Delete</Button>
+                <div className="d-flex">
+                  <Button variant="danger" onClick={() => handleShowConfirmation(account.id)}>Delete</Button>
+                  <Link href={`/raw_data/${account.id}`} passHref>
+                    <Button className="ms-auto" variant="dark">
+                      Raw Data
+                    </Button>
+                  </Link>
+                </div>
               </Accordion.Body>
             </Accordion.Item>
           )})}

@@ -7,17 +7,30 @@ const syncKucoinData = async (account: Account, since?: Date) => {
   // Adding one millisecond to avoid fetching results we already have
   const fetchFrom = (since || lastCreatedAt || beginningOfLastYear).valueOf() + 1;
 
-  console.log('lastCreatedAt', lastCreatedAt);
-  console.log('fetchFrom', fetchFrom);
-  const results = await fetch(`/api/kucoin_data?privateApiKey=${account.privateApiKey}&privateApiPassphrase=${account.privateApiPassphrase}&privateApiSecret=${account.privateApiSecret}&since=${fetchFrom}`).then(res => res.json());
-  const ledgerEntriesWithAccountId = results.ledgers.map(l => ({ ...l, uiAccountId: account.id }));
+  const today = (new Date()).valueOf();
+  const oneWeek = 1000 * 3600 * 24 * 7;
+  const numberOfWeeksToFetch = Math.ceil((today - fetchFrom) / oneWeek);
 
-  return db.kucoinLedgerEntries.bulkAdd(ledgerEntriesWithAccountId).catch(error => {
-    // Swallow duplicate entry error. BulkAdd won't rollback the succesful entries.
-    if (!error.message.match(/Key already exists in the object store/)) {
-      throw error;
-    }
-  });
+  const intervalsToFetch = [];
+  for (let i = 0; i < numberOfWeeksToFetch; i += 1) {
+    intervalsToFetch.push({
+      since: fetchFrom +  i * oneWeek,
+      until: fetchFrom + oneWeek + i * oneWeek,
+    })
+  }
+
+  for (let i = intervalsToFetch.length - 1; i >= 0; i -= 1) {
+    const interval = intervalsToFetch[i];
+    const results = await fetch(`/api/kucoin_data?privateApiKey=${account.privateApiKey}&privateApiPassphrase=${account.privateApiPassphrase}&privateApiSecret=${account.privateApiSecret}&since=${interval.since}&until=${interval.until}`).then(res => res.json());
+    const ledgerEntriesWithAccountId = results.ledgers.map(l => ({ ...l, uiAccountId: account.id }));
+
+    await db.kucoinLedgerEntries.bulkAdd(ledgerEntriesWithAccountId).catch(error => {
+      // Swallow duplicate entry error. BulkAdd won't rollback the succesful entries.
+      if (!error.message.match(/Key already exists in the object store/)) {
+        throw error;
+      }
+    });
+  }
 }
 
 export default syncKucoinData;
