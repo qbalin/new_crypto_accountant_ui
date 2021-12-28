@@ -10,18 +10,18 @@ import { SupportedBlockchain, SupportedPlatform } from "@qbalin/new_crypto_accou
 import { deleteAccount } from "../lib/account_data";
 
 const accountsAvailable = {
-  [SupportedPlatform.Coinbase]: {
-    platform: SupportedPlatform.Coinbase,
-    subType: 'centralized',
-    name: 'Coinbase Pro',
-    fields: [
-      {name: 'nickname', label: 'Unique account nickname'},
-      {name: 'privateApiKey', label: 'Private API key'},
-      {name: 'privateApiSecret', label: 'Private API secret'},
-      {name: 'privateApiPassphrase', label: 'Private API passphrase'}
-    ],
-    iconPath: '/images/coinbase_pro_logo.svg',
-  },
+  // [SupportedPlatform.Coinbase]: {
+  //   platform: SupportedPlatform.Coinbase,
+  //   subType: 'centralized',
+  //   name: 'Coinbase Pro',
+  //   fields: [
+  //     {name: 'nickname', label: 'Unique account nickname'},
+  //     {name: 'privateApiKey', label: 'Private API key'},
+  //     {name: 'privateApiSecret', label: 'Private API secret'},
+  //     {name: 'privateApiPassphrase', label: 'Private API passphrase'}
+  //   ],
+  //   iconPath: '/images/coinbase_pro_logo.svg',
+  // },
   [SupportedPlatform.KuCoin]: {
     platform: SupportedPlatform.KuCoin,
     subType: 'centralized',
