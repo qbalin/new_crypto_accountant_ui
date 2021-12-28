@@ -88,7 +88,7 @@ const Accounts = () => {
                 {account.nickname}
               </Accordion.Header>
               <Accordion.Body>
-                <Table striped bordered hover>
+                <Table striped bordered hover responsive>
                   <tbody>
                     {
                       Object.entries(account)
