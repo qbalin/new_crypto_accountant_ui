@@ -19,7 +19,7 @@ const Sync = () => {
   };
 
   return <>
-    <Button variant="dark" onClick={syncAccounts}>Sync accounts</Button>
+    <Button className="my-2" variant="dark" onClick={syncAccounts}>Sync accounts</Button>
   </>
 }
 
