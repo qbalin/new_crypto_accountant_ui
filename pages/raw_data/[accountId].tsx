@@ -1,29 +1,19 @@
-import { SupportedBlockchain, SupportedPlatform } from '@qbalin/new_crypto_accountant_utils';
 import { useLiveQuery } from 'dexie-react-hooks/dist/dexie-react-hooks.mjs'
 import { db } from "../../lib/db";
-import KucoinRawData from './kucoin';
-import EtherscanLikeRawData from './etherscan_like';
 import { Breadcrumb, Modal, Button } from 'react-bootstrap';
 import Link from 'next/link';
 import { Account } from '../../lib/account';
 import { useState } from 'react';
 import { purgeAccountData } from '../../lib/account_data';
+import RawDataTables from '../../lib/pages/raw_data_tables';
+import { useRouter } from 'next/router'
 
-const innerComponent = (account: Account) => {
-  if (!account) {
-    return null;
-  } else if (account.platformName === SupportedPlatform.KuCoin) {
-    return <KucoinRawData accountId={account.id}/>;
-  } else if (account.blockchainName === SupportedBlockchain.Ethereum) {
-    return <EtherscanLikeRawData accountId={account.id}/>;
-  }
+const RawData = () => {
+  const router = useRouter();
+  const { accountId } = router.query;
 
-  return null;
-}
-
-const RawData = ({ accountId }) => {
   const account: Account = useLiveQuery(
-    () => accountId && db.accounts.get(parseInt(accountId, 10)), [accountId]
+    () => accountId && db.accounts.get(parseInt(accountId as string, 10)), [accountId]
   );
 
   const [accountIdForDataPurge, setAccountIdForDataPurge] = useState(-1);
@@ -55,7 +45,8 @@ const RawData = ({ accountId }) => {
       Purge data
     </Button>
 
-    {innerComponent(account)}
+    <RawDataTables account={account}/>
+
     <Modal show={showPurgeConfirmation} onHide={handleClosePurgeConfirmation}>
       <Modal.Header closeButton>
         <Modal.Title>Are you sure?</Modal.Title>
@@ -70,30 +61,6 @@ const RawData = ({ accountId }) => {
       </Modal.Footer>
     </Modal>
   </div>;
-}
-
-const getAllAccountIds = async () => {
-  return (await db.accounts.toArray()).map(account => ({
-    params: {
-      accountId: account.id
-    }
-  }));
-}
-
-export async function getStaticPaths() {
-  const paths = await getAllAccountIds();
-  return {
-    paths,
-    fallback: true
-  }
-}
-
-export async function getStaticProps({ params }) {
-  return {
-    props: {
-      accountId: params.accountId
-    }
-  }
 }
 
 export default RawData;

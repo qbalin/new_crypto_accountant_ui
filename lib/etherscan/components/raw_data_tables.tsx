@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks/dist/dexie-react-hooks.mjs';
 import { Table, Accordion } from 'react-bootstrap';
-import { db } from "../../lib/db";
+import { db } from '../../db';
 
 const showTable = (data, label, key) => {
   if (!data || data.length === 0) {
@@ -39,7 +39,7 @@ const showTable = (data, label, key) => {
   </>;
 }
 
-const EtherscanLikeRawData = ({ accountId }) => {
+const EtherscanRawData = ({ accountId }) => {
   const normalTransactions = useLiveQuery(
     () => db.etherscanLikeNormalTransactions.where({ uiAccountId: accountId }).toArray()
   );
@@ -57,4 +57,4 @@ const EtherscanLikeRawData = ({ accountId }) => {
   </Accordion>
 }
 
-export default EtherscanLikeRawData;
+export default EtherscanRawData;

@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks/dist/dexie-react-hooks.mjs';
 import { Table, Accordion } from 'react-bootstrap';
-import { db } from "../../lib/db";
+import { db } from '../../db';
 
 const KucoinRawData = ({ accountId }) => {
   const ledgerEntries = useLiveQuery(
