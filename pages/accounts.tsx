@@ -56,6 +56,17 @@ const accountsAvailable = {
     ],
     iconPath: '/images/polygon_logo.png',
   },
+  [SupportedBlockchain.BinanceSmartChain]: {
+    platform: SupportedBlockchain.BinanceSmartChain,
+    subType: 'decentralized',
+    name: 'Binance Smart Chain',
+    fields: [
+      {name: 'nickname', label: 'Unique account nickname'},
+      {name: 'blockchainExplorerApiKey', label: 'Blockchain explorer API key'},
+      {name: 'walletAddress', label: 'Wallet Address'},
+    ],
+    iconPath: '/images/binance_smart_chain_logo.png',
+  },
 }
 
 const Accounts = () => {
