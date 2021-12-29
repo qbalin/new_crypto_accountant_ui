@@ -22,7 +22,7 @@ const syncKucoinData = async (account: Account, since?: Date) => {
 
   for (let i = intervalsToFetch.length - 1; i >= 0; i -= 1) {
     const interval = intervalsToFetch[i];
-    const results = await fetch(`/api/raw_data/${SupportedPlatform.KuCoin}?privateApiKey=${account.privateApiKey}&privateApiPassphrase=${account.privateApiPassphrase}&privateApiSecret=${account.privateApiSecret}&since=${interval.since}&until=${interval.until}`).then(res => res.json());
+    const results = await fetch(`/api/raw_data/${SupportedPlatform.KuCoin}?privateApiKey=${encodeURIComponent(account.privateApiKey)}&privateApiPassphrase=${encodeURIComponent(account.privateApiPassphrase)}&privateApiSecret=${encodeURIComponent(account.privateApiSecret)}&since=${interval.since}&until=${interval.until}`).then(res => res.json());
     const ledgerEntriesWithAccountId = results.ledgers.map(l => ({ ...l, uiAccountId: account.id }));
 
     await db.kucoinLedgerEntries.bulkAdd(ledgerEntriesWithAccountId).catch(error => {

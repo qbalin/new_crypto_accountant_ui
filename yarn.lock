@@ -239,10 +239,10 @@
   resolved "https://registry.npmjs.org/@popperjs/core/-/core-2.11.0.tgz"
   integrity sha512-zrsUxjLOKAzdewIDRWy9nsV1GQsKBCWaGwsZQlCgr6/q+vjyZhFgqedLfFBuI9anTPEUT4APq9Mu0SZBTzIcGQ==
 
-"@qbalin/new_crypto_accountant_utils@^1.0.4":
-  version "1.0.4"
-  resolved "https://npm.pkg.github.com/download/@qbalin/new_crypto_accountant_utils/1.0.4/13c2df78204e5c9c7a7b8f3a9f32c7f79c1ca7b0b1c0063516e9b36ccae96560#1defc4e3a3eff7648f55066ad865f6091cc54624"
-  integrity sha512-Ip9CxlkAMlGk+NJKX0vjXy/wGr2xPKuLJzVdtWL/OiIkCAG8KncVQmJth5ltSJmo8RV+kQiPkYNwmcCzB7qPsQ==
+"@qbalin/new_crypto_accountant_utils@^1.0.5":
+  version "1.0.5"
+  resolved "https://npm.pkg.github.com/download/@qbalin/new_crypto_accountant_utils/1.0.5/179505c9747fce070880f807d5cde4f77dc18184e0678d85ba96daf77f5b70b0#e95d89e52d6c834bb08cb3979dfc09138a642416"
+  integrity sha512-4h8sFcRY/wRNk5g92KsmuslJk95IVT0BTlhW36Ksvr7b2EVGaogz6AkMLbQ/hgwoiOyuUwbfuJKGXHrm+l4Few==
   dependencies:
     "@types/node" "^17.0.4"
 

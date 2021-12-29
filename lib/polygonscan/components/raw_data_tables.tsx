@@ -7,12 +7,15 @@ const showTable = (data, label, key) => {
     return null;
   }
 
-  const filteredData = data.map(entry => {
-    const newEntry = {...entry};
-    delete newEntry.uiAccountId;
-    delete newEntry.id;
-    return newEntry;
-  })
+  const filteredData = data.map(entry =>
+    Object.entries(entry).reduce((memo, [key, value]) => {
+      if (key === 'uiAccountId') {
+        return memo;
+      }
+      memo[key] = typeof value === 'object' ? JSON.stringify(value) : value
+      return memo;
+    }, {})
+  )
 
   const headers = Object.keys(filteredData[0]);
 

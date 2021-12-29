@@ -3,7 +3,7 @@ import { Account } from "../account";
 import { db } from "../db";
 
 const syncPolygonData = async (account: Account) => {
-  const results = await fetch(`/api/raw_data/${SupportedBlockchain.Polygon}?apiKey=${account.blockchainExplorerApiKey}&walletAddress=${account.walletAddress}`).then(res => res.json());
+  const results = await fetch(`/api/raw_data/${SupportedBlockchain.Polygon}?apiKey=${encodeURIComponent(account.blockchainExplorerApiKey)}&walletAddress=${encodeURIComponent(account.walletAddress)}`).then(res => res.json());
   return db.transaction('rw', db.etherscanLikeInternalTransactions, db.etherscanLikeNormalTransactions, db.etherscanLikeTokenTransactions, async ()=>{
     // Records from etherscan have no id, so to perform an update
     // - We fetch them all (the API is quite fast)

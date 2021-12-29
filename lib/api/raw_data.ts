@@ -5,11 +5,14 @@ import kucoinRawDataHandler from '../kucoin/api/raw_data';
 import etherscanRawDataHandler from '../etherscan/api/raw_data';
 import polygonscanRawDataHandler from '../polygonscan/api/raw_data';
 import bscscanRawDataHandler from '../bscscan/api/raw_data';
+import coinbaseRawDataHandler from '../coinbase/api/raw_data';
 
 export default async function rawDataHandler(req: NextApiRequest, res: NextApiResponse) {
   const { source } = req.query;
   if (source === SupportedPlatform.KuCoin ) {
     return kucoinRawDataHandler(req, res);
+  } else if (source === SupportedPlatform.Coinbase) {
+    return coinbaseRawDataHandler(req, res);
   } else if (source === SupportedBlockchain.Ethereum) {
     return etherscanRawDataHandler(req, res);
   } else if (source === SupportedBlockchain.Polygon) {

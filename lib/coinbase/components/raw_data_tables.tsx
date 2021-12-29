@@ -42,22 +42,30 @@ const showTable = (data, label, key) => {
   </>;
 }
 
-const BscscanRawData = ({ accountId }) => {
-  const normalTransactions = useLiveQuery(
-    () => db.etherscanLikeNormalTransactions.where({ uiAccountId: accountId }).toArray()
+const CoinbaseRawData = ({ accountId }) => {
+  const coinbaseFills = useLiveQuery(
+    () => db.coinbaseFills.where({ uiAccountId: accountId }).toArray()
   );
-  const internalTransactions = useLiveQuery(
-    () => db.etherscanLikeInternalTransactions.where({ uiAccountId: accountId }).toArray()
+  const coinbaseTransfers = useLiveQuery(
+    () => db.coinbaseTransfers.where({ uiAccountId: accountId }).toArray()
   );
-  const tokenTransactions = useLiveQuery(
-    () => db.etherscanLikeTokenTransactions.where({ uiAccountId: accountId }).toArray()
+  const coinbaseConversions = useLiveQuery(
+    () => db.coinbaseConversions.where({ uiAccountId: accountId }).toArray()
+  );
+  const coinbaseAccounts = useLiveQuery(
+    () => db.coinbaseAccounts.where({ uiAccountId: accountId }).toArray()
+  );
+  const coinbaseProducts = useLiveQuery(
+    () => db.coinbaseProducts.where({ uiAccountId: accountId }).toArray()
   );
 
   return <Accordion>
-    {showTable(normalTransactions, 'Normal transactions', 1)}
-    {showTable(internalTransactions, 'Internal transactions', 2)}
-    {showTable(tokenTransactions, 'Token transactions', 3)}
+    {showTable(coinbaseFills, 'Fills', 1)}
+    {showTable(coinbaseTransfers, 'Transfers', 2)}
+    {showTable(coinbaseConversions, 'Conversions', 3)}
+    {showTable(coinbaseAccounts, 'Accounts', 4)}
+    {showTable(coinbaseProducts, 'Products', 5)}
   </Accordion>
 }
 
-export default BscscanRawData;
+export default CoinbaseRawData;

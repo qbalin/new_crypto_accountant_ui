@@ -6,10 +6,13 @@ import { syncEthereumData, deleteEthereumAccount, purgeEthereumAccountData } fro
 import { syncPolygonData, deletePolygonAccount, purgePolygonAccountData } from "./polygonscan/account_data";
 import { syncKucoinData, deleteKucoinAccount, purgeKucoinAccountData } from "./kucoin/account_data";
 import { syncBscData, deleteBscAccount, purgeBscAccountData } from "./bscscan/account_data";
+import { deleteCoinbaseAccount, purgeCoinbaseAccountData, syncCoinbaseData } from "./coinbase/account_data";
 
 export async function syncAccount(account: Account) {
   if (account.platformName === SupportedPlatform.KuCoin) {
     syncKucoinData(account);
+  } else if (account.platformName === SupportedPlatform.Coinbase) {
+    syncCoinbaseData(account);
   } else if (account.blockchainName === SupportedBlockchain.Ethereum) {
     syncEthereumData(account);
   } else if (account.blockchainName === SupportedBlockchain.Polygon) {
@@ -25,6 +28,8 @@ export async function deleteAccount(accountId) {
   const account = await db.accounts.get(accountId);
   if (account.platformName === SupportedPlatform.KuCoin) {
     return deleteKucoinAccount(accountId);
+  } else if (account.platformName === SupportedPlatform.Coinbase) {
+    return deleteCoinbaseAccount(accountId);
   } else if (account.blockchainName === SupportedBlockchain.Ethereum) {
     return deleteEthereumAccount(accountId);
   } else if (account.blockchainName === SupportedBlockchain.Polygon) {
@@ -40,6 +45,8 @@ export async function purgeAccountData(accountId) {
   const account = await db.accounts.get(accountId);
   if (account.platformName === SupportedPlatform.KuCoin) {
     purgeKucoinAccountData(accountId);
+  } else if (account.platformName === SupportedPlatform.Coinbase) {
+    purgeCoinbaseAccountData(accountId);
   } else if (account.blockchainName === SupportedBlockchain.Ethereum) {
     purgeEthereumAccountData(accountId);
   } else if (account.blockchainName === SupportedBlockchain.Polygon) {

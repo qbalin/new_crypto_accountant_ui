@@ -11,11 +11,15 @@ const KucoinRawData = ({ accountId }) => {
     return null;
   }
 
-  const filteredData = ledgerEntries.map(entry => {
-    const newEntry = {...entry};
-    delete newEntry.uiAccountId;
-    return newEntry;
-  })
+  const filteredData = ledgerEntries.map(entry =>
+    Object.entries(entry).reduce((memo, [key, value]) => {
+      if (key === 'uiAccountId') {
+        return memo;
+      }
+      memo[key] = typeof value === 'object' ? JSON.stringify(value) : value
+      return memo;
+    }, {})
+  )
 
   const headers = Object.keys(filteredData[0]);
 
