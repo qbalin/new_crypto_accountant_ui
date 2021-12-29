@@ -46,7 +46,7 @@ const syncCoinbaseData = async (account: Account, since?: Date) => {
   // that the user has used first, and then all other
   const usedProductIds = (await db.coinbaseFills.toArray()).map(fill => fill.product_id);
   const allProductIds = (await db.coinbaseProducts.toCollection().primaryKeys());
-  const productIds = Array.from(new Set([...usedProductIds, ...allProductIds]));
+  const productIds = Array.from(new Set([...usedProductIds, ...allProductIds])) as string[];
   for (let i = 0; i < productIds.length; i += 1) {
     const productId = productIds[i];
     const res = await fetch(`/api/raw_data/${SupportedPlatform.Coinbase}?privateApiKey=${encodeURIComponent(account.privateApiKey)}&privateApiPassphrase=${encodeURIComponent(account.privateApiPassphrase)}&privateApiSecret=${encodeURIComponent(account.privateApiSecret)}&since=${fetchFrom}&productId=${encodeURIComponent(productId)}`).then(res => res.json());
