@@ -15,7 +15,6 @@ const syncCoinbaseData = async (account: Account, since?: Date) => {
   const accountsWithAccountId = results.accounts.map(record => ({ ...record, uiAccountId: account.id }));
   const conversionsWithAccountId = results.conversions.map(record => ({ ...record, uiAccountId: account.id }));
   const productsWithAccountId = results.products.map(record => ({ ...record, uiAccountId: account.id }));
-  const fillsWithAccountId = results.fills.map(record => ({ ...record, uiAccountId: account.id }));
   const transfersWithAccountId = results.transfers.map(record => ({ ...record, uiAccountId: account.id }));
 
   await db.coinbaseAccounts.bulkAdd(accountsWithAccountId).catch(error => {
@@ -36,18 +35,29 @@ const syncCoinbaseData = async (account: Account, since?: Date) => {
       throw error;
     }
   });
-  await db.coinbaseFills.bulkAdd(fillsWithAccountId).catch(error => {
-    // Swallow duplicate entry error. BulkAdd won't rollback the succesful entries.
-    if (!error.message.match(/Key already exists in the object store/)) {
-      throw error;
-    }
-  });
   await db.coinbaseTransfers.bulkAdd(transfersWithAccountId).catch(error => {
     // Swallow duplicate entry error. BulkAdd won't rollback the succesful entries.
     if (!error.message.match(/Key already exists in the object store/)) {
       throw error;
     }
   });
+
+  // Fills are super slow: they must be fetched by product id. We'll fetch the products
+  // that the user has used first, and then all other
+  const usedProductIds = (await db.coinbaseFills.toArray()).map(fill => fill.product_id);
+  const allProductIds = (await db.coinbaseProducts.toCollection().primaryKeys());
+  const productIds = Array.from(new Set([...usedProductIds, ...allProductIds]));
+  for (let i = 0; i < productIds.length; i += 1) {
+    const productId = productIds[i];
+    const res = await fetch(`/api/raw_data/${SupportedPlatform.Coinbase}?privateApiKey=${encodeURIComponent(account.privateApiKey)}&privateApiPassphrase=${encodeURIComponent(account.privateApiPassphrase)}&privateApiSecret=${encodeURIComponent(account.privateApiSecret)}&since=${fetchFrom}&productId=${encodeURIComponent(productId)}`).then(res => res.json());
+    const fillsWithAccountId = res.fills.map(record => ({ ...record, uiAccountId: account.id }));
+    await db.coinbaseFills.bulkAdd(fillsWithAccountId).catch(error => {
+      // Swallow duplicate entry error. BulkAdd won't rollback the succesful entries.
+      if (!error.message.match(/Key already exists in the object store/)) {
+        throw error;
+      }
+    });
+  }
 }
 
 const deleteCoinbaseAccount = async (accountId) => {

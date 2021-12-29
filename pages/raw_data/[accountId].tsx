@@ -4,7 +4,7 @@ import { Breadcrumb, Modal, Button } from 'react-bootstrap';
 import Link from 'next/link';
 import { Account } from '../../lib/account';
 import { useState } from 'react';
-import { purgeAccountData } from '../../lib/account_data';
+import { purgeAccountData, syncAccount } from '../../lib/account_data';
 import RawDataTables from '../../lib/pages/raw_data_tables';
 import { useRouter } from 'next/router'
 
@@ -41,8 +41,11 @@ const RawData = () => {
       <Breadcrumb.Item active>{type} - {account?.nickname}</Breadcrumb.Item>
     </Breadcrumb>
 
-    <Button className='mb-2' variant="warning" onClick={() => handleShowPurgeConfirmation(account.id)}>
+    <Button className='m-2' variant="warning" onClick={() => handleShowPurgeConfirmation(account.id)}>
       Purge data
+    </Button>
+    <Button className='m-2' variant="dark" onClick={() => syncAccount(account)}>
+      Sync
     </Button>
 
     <RawDataTables account={account}/>
