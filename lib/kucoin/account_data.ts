@@ -2,7 +2,7 @@ import { SupportedPlatform } from "@qbalin/new_crypto_accountant_utils";
 import { Account } from "../account";
 import { db } from "../db";
 
-const syncKucoinData = async (account: Account, since?: Date) => {
+const syncData = async (account: Account, since?: Date) => {
   const lastCreatedAt = (await db.kucoinLedgerEntries.orderBy('createdAt').last())?.createdAt;
   const beginningOfLastYear = new Date((new Date().getFullYear() - 1).toString());
   // Adding one millisecond to avoid fetching results we already have
@@ -34,17 +34,25 @@ const syncKucoinData = async (account: Account, since?: Date) => {
   }
 }
 
-const deleteKucoinAccount = async (accountId) => {
+const deleteAccount = async (accountId) => {
   return db.transaction('rw', db.accounts, db.kucoinLedgerEntries, async () => {
     await db.accounts.delete(accountId);
     await db.kucoinLedgerEntries.where({ uiAccountId: accountId }).delete();
   });
 }
 
-const purgeKucoinAccountData = async (accountId) => {
+const purgeAccountData = async (accountId) => {
   return db.transaction('rw', db.kucoinLedgerEntries, async () => {
     await db.kucoinLedgerEntries.where({ uiAccountId: accountId }).delete();
   });
 }
 
-export { syncKucoinData, deleteKucoinAccount, purgeKucoinAccountData };
+const rawDataBundle = async (accountId) => {
+  const ledgerEntries = await db.kucoinLedgerEntries.where({ uiAccountId: accountId }).toArray();
+  return {
+    type: SupportedPlatform.KuCoin,
+    ledgerEntries,
+  }
+}
+
+export { syncData, deleteAccount, purgeAccountData, rawDataBundle };

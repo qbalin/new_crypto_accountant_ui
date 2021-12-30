@@ -2,58 +2,44 @@ import { SupportedBlockchain, SupportedPlatform } from "@qbalin/new_crypto_accou
 import { Account } from "./account";
 import { db } from "./db";
 
-import { syncEthereumData, deleteEthereumAccount, purgeEthereumAccountData } from "./etherscan/account_data";
-import { syncPolygonData, deletePolygonAccount, purgePolygonAccountData } from "./polygonscan/account_data";
-import { syncKucoinData, deleteKucoinAccount, purgeKucoinAccountData } from "./kucoin/account_data";
-import { syncBscData, deleteBscAccount, purgeBscAccountData } from "./bscscan/account_data";
-import { deleteCoinbaseAccount, purgeCoinbaseAccountData, syncCoinbaseData } from "./coinbase/account_data";
+import * as Ethereum from "./etherscan/account_data";
+import * as Polygon from "./polygonscan/account_data";
+import * as Kucoin from "./kucoin/account_data";
+import * as BinanceSmartChain from "./bscscan/account_data";
+import * as Coinbase from "./coinbase/account_data";
 
-export async function syncAccount(account: Account) {
+const moduleFor = (account: Account) => {
   if (account.platformName === SupportedPlatform.KuCoin) {
-    syncKucoinData(account);
+    return Kucoin;
   } else if (account.platformName === SupportedPlatform.Coinbase) {
-    syncCoinbaseData(account);
+    return Coinbase;
   } else if (account.blockchainName === SupportedBlockchain.Ethereum) {
-    syncEthereumData(account);
+    return Ethereum;
   } else if (account.blockchainName === SupportedBlockchain.Polygon) {
-    syncPolygonData(account);
+    return Polygon;
   } else if (account.blockchainName === SupportedBlockchain.BinanceSmartChain) {
-    syncBscData(account);
+    return BinanceSmartChain;
   } else {
     throw new Error(`syncAccount unimplemented for ${account.blockchainName || account.platformName}`);
   }
 }
 
+export async function syncAccount(account: Account) {
+  return moduleFor(account).syncData(account);
+}
+
 export async function deleteAccount(accountId) {
   const account = await db.accounts.get(accountId);
-  if (account.platformName === SupportedPlatform.KuCoin) {
-    return deleteKucoinAccount(accountId);
-  } else if (account.platformName === SupportedPlatform.Coinbase) {
-    return deleteCoinbaseAccount(accountId);
-  } else if (account.blockchainName === SupportedBlockchain.Ethereum) {
-    return deleteEthereumAccount(accountId);
-  } else if (account.blockchainName === SupportedBlockchain.Polygon) {
-    return deletePolygonAccount(accountId);
-  } else if (account.blockchainName === SupportedBlockchain.BinanceSmartChain) {
-    return deleteBscAccount(accountId);
-  } else {
-    throw new Error(`deleteAccount unimplemented for ${account.blockchainName || account.platformName}`);
-  }
+  return moduleFor(account).deleteAccount(accountId);
 }
 
 export async function purgeAccountData(accountId) {
   const account = await db.accounts.get(accountId);
-  if (account.platformName === SupportedPlatform.KuCoin) {
-    purgeKucoinAccountData(accountId);
-  } else if (account.platformName === SupportedPlatform.Coinbase) {
-    purgeCoinbaseAccountData(accountId);
-  } else if (account.blockchainName === SupportedBlockchain.Ethereum) {
-    purgeEthereumAccountData(accountId);
-  } else if (account.blockchainName === SupportedBlockchain.Polygon) {
-    purgePolygonAccountData(accountId);
-  } else if (account.blockchainName === SupportedBlockchain.BinanceSmartChain) {
-    purgeBscAccountData(accountId);
-  } else {
-    throw new Error(`deleteAccount unimplemented for ${account.blockchainName || account.platformName}`);
-  }
+  return moduleFor(account).purgeAccountData(accountId);
+}
+
+export async function rawDataBundle() {
+  return Promise.all((await db.accounts.toArray()).map((account: Account) =>
+    moduleFor(account).rawDataBundle(account.id)
+  ));
 }

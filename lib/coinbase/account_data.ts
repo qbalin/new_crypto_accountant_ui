@@ -2,7 +2,7 @@ import { SupportedPlatform } from "@qbalin/new_crypto_accountant_utils";
 import { Account } from "../account";
 import { db } from "../db";
 
-const syncCoinbaseData = async (account: Account, since?: Date) => {
+const syncData = async (account: Account, since?: Date) => {
   const lastTransferCreatedAt = (await (await db.coinbaseTransfers.toArray()).sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at)))[0]?.created_at;
   const lastFillCreatedAt = (await (await db.coinbaseFills.toArray()).sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at)))[0]?.created_at;
   const lastCreatedAt = (!lastTransferCreatedAt && !lastFillCreatedAt) ? null : new Date(Math.max(+new Date(lastTransferCreatedAt || 0), +new Date(lastFillCreatedAt || 0)));
@@ -60,27 +60,41 @@ const syncCoinbaseData = async (account: Account, since?: Date) => {
   }
 }
 
-const deleteCoinbaseAccount = async (accountId) => {
+const deleteAccount = async (accountId) => {
   return db.transaction('rw', [db.accounts, db.coinbaseAccounts, db.coinbaseProducts, db.coinbaseConversions, db.coinbaseProducts, db.coinbaseFills, db.coinbaseTransfers], async () => {
     await db.accounts.delete(accountId);
     await db.coinbaseAccounts.where({ uiAccountId: accountId }).delete();
     await db.coinbaseProducts.where({ uiAccountId: accountId }).delete();
     await db.coinbaseConversions.where({ uiAccountId: accountId }).delete();
-    await db.coinbaseProducts.where({ uiAccountId: accountId }).delete();
     await db.coinbaseFills.where({ uiAccountId: accountId }).delete();
     await db.coinbaseTransfers.where({ uiAccountId: accountId }).delete();
   });
 }
 
-const purgeCoinbaseAccountData = async (accountId) => {
+const purgeAccountData = async (accountId) => {
   return db.transaction('rw', [db.coinbaseAccounts, db.coinbaseProducts, db.coinbaseConversions, db.coinbaseProducts, db.coinbaseFills, db.coinbaseTransfers], async () => {
     await db.coinbaseAccounts.where({ uiAccountId: accountId }).delete();
     await db.coinbaseProducts.where({ uiAccountId: accountId }).delete();
     await db.coinbaseConversions.where({ uiAccountId: accountId }).delete();
-    await db.coinbaseProducts.where({ uiAccountId: accountId }).delete();
     await db.coinbaseFills.where({ uiAccountId: accountId }).delete();
     await db.coinbaseTransfers.where({ uiAccountId: accountId }).delete();
   });
 }
 
-export { syncCoinbaseData, deleteCoinbaseAccount, purgeCoinbaseAccountData };
+const rawDataBundle = async (accountId) => {
+  const accounts = await db.coinbaseAccounts.where({ uiAccountId: accountId }).toArray();
+  const products = await db.coinbaseProducts.where({ uiAccountId: accountId }).toArray();
+  const conversions = await db.coinbaseConversions.where({ uiAccountId: accountId }).toArray();
+  const fills = await db.coinbaseFills.where({ uiAccountId: accountId }).toArray();
+  const transfers = await db.coinbaseTransfers.where({ uiAccountId: accountId }).toArray();
+  return {
+    type: SupportedPlatform.Coinbase,
+    accounts,
+    products,
+    conversions,
+    fills,
+    transfers
+  }
+}
+
+export { syncData, deleteAccount, purgeAccountData, rawDataBundle };

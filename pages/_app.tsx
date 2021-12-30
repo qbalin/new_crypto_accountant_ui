@@ -25,7 +25,7 @@ export default function App({ Component, pageProps } : AppProps) {
               <Nav className="me-auto">
                 <Link href='/'>Home</Link>
                 <Link href='/accounts'>Accounts</Link>
-                <Link href='/sync'>Sync</Link>
+                <Link href='/taxes'>Taxes</Link>
               </Nav>
             </Navbar.Collapse>
           </Container>
