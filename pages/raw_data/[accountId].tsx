@@ -16,16 +16,14 @@ const RawData = () => {
     () => accountId && db.accounts.get(parseInt(accountId as string, 10)), [accountId]
   );
 
-  const [accountIdForDataPurge, setAccountIdForDataPurge] = useState(-1);
   const [showPurgeConfirmation, setShowPurgeConfirmation] = useState(false);
 
   const handleClosePurgeConfirmation = () => setShowPurgeConfirmation(false);
-  const handleShowPurgeConfirmation = (accountId) => {
-    setAccountIdForDataPurge(accountId);
+  const handleShowPurgeConfirmation = () => {
     setShowPurgeConfirmation(true);
   };
   const handleAccountDataPurge = async () => {
-    await purgeAccountData(accountIdForDataPurge)
+    await purgeAccountData(account.id)
     setShowPurgeConfirmation(false);
   }
 
@@ -41,7 +39,7 @@ const RawData = () => {
       <Breadcrumb.Item active>{type} - {account?.nickname}</Breadcrumb.Item>
     </Breadcrumb>
 
-    <Button className='m-2' variant="warning" onClick={() => handleShowPurgeConfirmation(account.id)}>
+    <Button className='m-2' variant="warning" onClick={handleShowPurgeConfirmation}>
       Purge data
     </Button>
     <Button className='m-2' variant="dark" onClick={() => syncAccount(account)}>
