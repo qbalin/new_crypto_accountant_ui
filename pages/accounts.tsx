@@ -40,7 +40,7 @@ const accountsAvailable = {
     name: 'Ethereum',
     fields: [
       {name: 'nickname', label: 'Unique account nickname'},
-      {name: 'blockchainExplorerApiKey', label: 'Blockchain explorer API key'},
+      {name: 'blockchainExplorerApiKey', label: 'Etherscan API key'},
       {name: 'walletAddress', label: 'Wallet Address'},
     ],
     iconPath: '/images/ethereum_logo.png',
@@ -51,7 +51,7 @@ const accountsAvailable = {
     name: 'Polygon',
     fields: [
       {name: 'nickname', label: 'Unique account nickname'},
-      {name: 'blockchainExplorerApiKey', label: 'Blockchain explorer API key'},
+      {name: 'blockchainExplorerApiKey', label: 'Polygonscan API key'},
       {name: 'walletAddress', label: 'Wallet Address'},
     ],
     iconPath: '/images/polygon_logo.png',
@@ -62,7 +62,7 @@ const accountsAvailable = {
     name: 'Binance Smart Chain',
     fields: [
       {name: 'nickname', label: 'Unique account nickname'},
-      {name: 'blockchainExplorerApiKey', label: 'Blockchain explorer API key'},
+      {name: 'blockchainExplorerApiKey', label: 'Bscscan API key'},
       {name: 'walletAddress', label: 'Wallet Address'},
     ],
     iconPath: '/images/binance_smart_chain_logo.png',
