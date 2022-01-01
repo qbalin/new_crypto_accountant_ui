@@ -1,5 +1,5 @@
-import { Account } from '../account';
 import { SupportedBlockchain, SupportedPlatform } from '@qbalin/new_crypto_accountant_utils';
+import { Account } from '../account';
 import PolygonscanRawData from '../polygonscan/components/raw_data_tables';
 import KucoinRawData from '../kucoin/components/raw_data_tables';
 import EtherscanRawData from '../etherscan/components/raw_data_tables';
@@ -9,15 +9,20 @@ import CoinbaseRawData from '../coinbase/components/raw_data_tables';
 const RawDataTables = ({ account } : {account: Account}) => {
   if (!account) {
     return null;
-  } else if (account.platformName === SupportedPlatform.KuCoin) {
+  }
+  if (account.platformName === SupportedPlatform.KuCoin) {
     return <KucoinRawData accountId={account.id}/>;
-  } else if (account.platformName === SupportedPlatform.Coinbase) {
+  }
+  if (account.platformName === SupportedPlatform.Coinbase) {
     return <CoinbaseRawData accountId={account.id}/>;
-  } else if (account.blockchainName === SupportedBlockchain.Ethereum) {
+  }
+  if (account.blockchainName === SupportedBlockchain.Ethereum) {
     return <EtherscanRawData accountId={account.id}/>;
-  } else if (account.blockchainName === SupportedBlockchain.Polygon) {
+  }
+  if (account.blockchainName === SupportedBlockchain.Polygon) {
     return <PolygonscanRawData accountId={account.id}/>;
-  } else if (account.blockchainName === SupportedBlockchain.BinanceSmartChain) {
+  }
+  if (account.blockchainName === SupportedBlockchain.BinanceSmartChain) {
     return <BscscanRawData accountId={account.id}/>;
   }
 

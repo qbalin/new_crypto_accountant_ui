@@ -11,15 +11,18 @@ export default async function rawDataHandler(req: NextApiRequest, res: NextApiRe
   const { source } = req.query;
   if (source === SupportedPlatform.KuCoin ) {
     return kucoinRawDataHandler(req, res);
-  } else if (source === SupportedPlatform.Coinbase) {
-    return coinbaseRawDataHandler(req, res);
-  } else if (source === SupportedBlockchain.Ethereum) {
-    return etherscanRawDataHandler(req, res);
-  } else if (source === SupportedBlockchain.Polygon) {
-    return polygonscanRawDataHandler(req, res);
-  } else if (source === SupportedBlockchain.BinanceSmartChain) {
-    return bscscanRawDataHandler(req, res);
-  } else {
-    throw new Error(`Data source not implemented: ${source}`);
   }
+  if (source === SupportedPlatform.Coinbase) {
+    return coinbaseRawDataHandler(req, res);
+  }
+  if (source === SupportedBlockchain.Ethereum) {
+    return etherscanRawDataHandler(req, res);
+  }
+  if (source === SupportedBlockchain.Polygon) {
+    return polygonscanRawDataHandler(req, res);
+  }
+  if (source === SupportedBlockchain.BinanceSmartChain) {
+    return bscscanRawDataHandler(req, res);
+  }
+  throw new Error(`Data source not implemented: ${source}`);
 }

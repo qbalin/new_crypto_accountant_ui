@@ -1,12 +1,12 @@
 import { useLiveQuery } from 'dexie-react-hooks/dist/dexie-react-hooks.mjs'
-import { db } from "../../lib/db";
 import { Breadcrumb, Modal, Button } from 'react-bootstrap';
 import Link from 'next/link';
-import { Account } from '../../lib/account';
 import { useState } from 'react';
+import { useRouter } from 'next/router'
+import { db } from "../../lib/db";
+import { Account } from '../../lib/account';
 import { purgeAccountData, syncAccount } from '../../lib/account_data';
 import RawDataTables from '../../lib/pages/raw_data_tables';
-import { useRouter } from 'next/router'
 
 const RawData = () => {
   const router = useRouter();

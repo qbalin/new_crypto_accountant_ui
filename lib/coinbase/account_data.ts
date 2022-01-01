@@ -49,8 +49,10 @@ const syncData = async (account: Account, since?: Date) => {
   const productIds = Array.from(new Set([...usedProductIds, ...allProductIds])) as string[];
   for (let i = 0; i < productIds.length; i += 1) {
     const productId = productIds[i];
-    const res = await fetch(`/api/raw_data/${SupportedPlatform.Coinbase}?privateApiKey=${encodeURIComponent(account.privateApiKey)}&privateApiPassphrase=${encodeURIComponent(account.privateApiPassphrase)}&privateApiSecret=${encodeURIComponent(account.privateApiSecret)}&since=${fetchFrom}&productId=${encodeURIComponent(productId)}`).then(res => res.json());
+    // eslint-disable-next-line no-await-in-loop
+    const res = await fetch(`/api/raw_data/${SupportedPlatform.Coinbase}?privateApiKey=${encodeURIComponent(account.privateApiKey)}&privateApiPassphrase=${encodeURIComponent(account.privateApiPassphrase)}&privateApiSecret=${encodeURIComponent(account.privateApiSecret)}&since=${fetchFrom}&productId=${encodeURIComponent(productId)}`).then(r => r.json());
     const fillsWithAccountId = res.fills.map(record => ({ ...record, uiAccountId: account.id }));
+    // eslint-disable-next-line no-await-in-loop
     await db.coinbaseFills.bulkAdd(fillsWithAccountId).catch(error => {
       // Swallow duplicate entry error. BulkAdd won't rollback the succesful entries.
       if (!error.message.match(/Key already exists in the object store/)) {
@@ -60,26 +62,22 @@ const syncData = async (account: Account, since?: Date) => {
   }
 }
 
-const deleteAccount = async (accountId) => {
-  return db.transaction('rw', [db.accounts, db.coinbaseAccounts, db.coinbaseProducts, db.coinbaseConversions, db.coinbaseProducts, db.coinbaseFills, db.coinbaseTransfers], async () => {
+const deleteAccount = async (accountId) => db.transaction('rw', [db.accounts, db.coinbaseAccounts, db.coinbaseProducts, db.coinbaseConversions, db.coinbaseProducts, db.coinbaseFills, db.coinbaseTransfers], async () => {
     await db.accounts.delete(accountId);
     await db.coinbaseAccounts.where({ uiAccountId: accountId }).delete();
     await db.coinbaseProducts.where({ uiAccountId: accountId }).delete();
     await db.coinbaseConversions.where({ uiAccountId: accountId }).delete();
     await db.coinbaseFills.where({ uiAccountId: accountId }).delete();
     await db.coinbaseTransfers.where({ uiAccountId: accountId }).delete();
-  });
-}
+  })
 
-const purgeAccountData = async (accountId) => {
-  return db.transaction('rw', [db.coinbaseAccounts, db.coinbaseProducts, db.coinbaseConversions, db.coinbaseProducts, db.coinbaseFills, db.coinbaseTransfers], async () => {
+const purgeAccountData = async (accountId) => db.transaction('rw', [db.coinbaseAccounts, db.coinbaseProducts, db.coinbaseConversions, db.coinbaseProducts, db.coinbaseFills, db.coinbaseTransfers], async () => {
     await db.coinbaseAccounts.where({ uiAccountId: accountId }).delete();
     await db.coinbaseProducts.where({ uiAccountId: accountId }).delete();
     await db.coinbaseConversions.where({ uiAccountId: accountId }).delete();
     await db.coinbaseFills.where({ uiAccountId: accountId }).delete();
     await db.coinbaseTransfers.where({ uiAccountId: accountId }).delete();
-  });
-}
+  })
 
 const rawDataBundle = async (accountId) => {
   const accounts = await db.coinbaseAccounts.where({ uiAccountId: accountId }).toArray();

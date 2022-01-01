@@ -1,0 +1,12 @@
+{
+  "files.trimTrailingWhitespace": true,
+  "eslint.validate": ["typescript"],
+  "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+  },
+  "editor.tabSize": 2,
+  "explorer.confirmDelete": false,
+  "files.autoSave": "afterDelay",
+  "editor.formatOnSave": true,
+  "editor.detectIndentation": false
+}

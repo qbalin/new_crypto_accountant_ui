@@ -8,11 +8,12 @@ const showTable = (data, label, key) => {
   }
 
   const filteredData = data.map(entry =>
-    Object.entries(entry).reduce((memo, [key, value]) => {
-      if (key === 'uiAccountId') {
+    Object.entries(entry).reduce((memo, [k, v]) => {
+      if (k === 'uiAccountId') {
         return memo;
       }
-      memo[key] = typeof value === 'object' ? JSON.stringify(value) : value
+      // eslint-disable-next-line no-param-reassign
+      memo[k] = typeof v === 'object' ? JSON.stringify(v) : v
       return memo;
     }, {})
   )

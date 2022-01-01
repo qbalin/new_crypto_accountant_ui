@@ -1,12 +1,11 @@
-import { db } from "../lib/db";
-import { Button } from "react-bootstrap";
+import { Button , Accordion, Card, Modal, Table } from "react-bootstrap";
 import { useLiveQuery } from 'dexie-react-hooks/dist/dexie-react-hooks.mjs'
-import { Accordion, Card, Modal, Table } from "react-bootstrap";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { SupportedBlockchain, SupportedPlatform } from "@qbalin/new_crypto_accountant_utils";
+import { db } from "../lib/db";
 import { deleteAccount } from "../lib/account_data";
 
 const accountsAvailable = {
@@ -100,12 +99,12 @@ const Accounts = () => {
     if (accounts?.length) {
       return <Accordion>
         {accounts.sort((a, b) => (a.blockchainName || a.platformName).localeCompare(b.blockchainName || b.platformName)).map((account, index) => {
-          const accountType = accountsAvailable[account.platformName] || accountsAvailable[account.blockchainName];
+          const type = accountsAvailable[account.platformName] || accountsAvailable[account.blockchainName];
           return (
             <Accordion.Item key={account.id} eventKey={index}>
               <Accordion.Header>
                 <span className="mx-2">
-                  <Image src={accountType.iconPath} width={32} height={32} alt=""/>
+                  <Image src={type.iconPath} width={32} height={32} alt=""/>
                 </span>
                 {account.nickname}
               </Accordion.Header>
@@ -114,7 +113,7 @@ const Accounts = () => {
                   <tbody>
                     {
                       Object.entries(account)
-                        .filter(([key, value]) => !['nickname', 'id'].includes(key))
+                        .filter(([key]) => !['nickname', 'id'].includes(key))
                         .map(([key ,value]) => (
                             <tr key={key}>
                               <td>{key}</td>
@@ -137,25 +136,24 @@ const Accounts = () => {
             </Accordion.Item>
           )})}
       </Accordion>
-    } else {
-      return 'No account registered yet';
     }
+      return 'No account registered yet';
+
   }
 
   const accountInputForm = () => {
-    const fields = accountType.fields;
+    const {fields} = accountType;
     const platformName = accountType.platform;
+    // eslint-disable-next-line no-param-reassign
     const initialValues = fields.reduce((memo, field) => { memo[field.name] = ''; return memo }, {})
 
-    const renderFields = () => {
-      return fields.map(field =>
+    const renderFields = () => fields.map(field =>
         <div key={field.name}>
           <label className="form-label" htmlFor={field.name}>{field.label}</label>
           <Field className="form-control" type="text" name={field.name} id={field.name} />
           <ErrorMessage name={field.name} component="div" />
         </div>
-      );
-    }
+      )
     return (
       <Formik
         initialValues={initialValues}
@@ -172,7 +170,7 @@ const Accounts = () => {
           return errors;
         }}
         onSubmit={ async (values, { setFieldError }) => {
-          let platformOrBlockchain: { platformName?: string, blockchainName?: string } = {};
+          const platformOrBlockchain: { platformName?: string, blockchainName?: string } = {};
           if (accountType.subType === 'centralized') {
             platformOrBlockchain.platformName = platformName
           } else {
@@ -226,8 +224,7 @@ const Accounts = () => {
       {displayAccounts()}
       <h2>Add accounts</h2>
       {
-        Object.values(accountsAvailable).map(accountAvailable => {
-          return <div key={accountAvailable.platform}>
+        Object.values(accountsAvailable).map(accountAvailable => <div key={accountAvailable.platform}>
             <Card className="my-2">
               <Card.Body>
                 <Card.Title className="d-flex align-items-center">
@@ -241,8 +238,7 @@ const Accounts = () => {
                 </Card.Title>
               </Card.Body>
             </Card>
-          </div>
-        })
+          </div>)
       }
       <Modal show={show} onHide={handleClose}>
         {

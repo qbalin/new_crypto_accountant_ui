@@ -2,6 +2,12 @@ import { SupportedBlockchain } from "@qbalin/new_crypto_accountant_utils";
 import { Account } from "../account";
 import { db } from "../db";
 
+const purgeAccountData = async (accountId) => db.transaction('rw', db.etherscanLikeNormalTransactions, db.etherscanLikeInternalTransactions, db.etherscanLikeTokenTransactions, async () => {
+  await db.etherscanLikeInternalTransactions.where({ uiAccountId: accountId }).delete();
+  await db.etherscanLikeNormalTransactions.where({ uiAccountId: accountId }).delete();
+  await db.etherscanLikeTokenTransactions.where({ uiAccountId: accountId }).delete();
+})
+
 const syncData = async (account: Account) => {
   const results = await fetch(`/api/raw_data/${SupportedBlockchain.Ethereum}?apiKey=${encodeURIComponent(account.blockchainExplorerApiKey)}&walletAddress=${encodeURIComponent(account.walletAddress)}`).then(res => res.json());
   return db.transaction('rw', db.etherscanLikeInternalTransactions, db.etherscanLikeNormalTransactions, db.etherscanLikeTokenTransactions, async ()=>{
@@ -17,22 +23,12 @@ const syncData = async (account: Account) => {
   })
 }
 
-const deleteAccount = async (accountId) => {
-  return db.transaction('rw', db.accounts, db.etherscanLikeNormalTransactions, db.etherscanLikeInternalTransactions, db.etherscanLikeTokenTransactions, async () => {
-    await db.accounts.delete(accountId);
-    await db.etherscanLikeInternalTransactions.where({ uiAccountId: accountId }).delete();
-    await db.etherscanLikeNormalTransactions.where({ uiAccountId: accountId }).delete();
-    await db.etherscanLikeTokenTransactions.where({ uiAccountId: accountId }).delete();
-  });
-}
-
-const purgeAccountData = async (accountId) => {
-  return db.transaction('rw', db.etherscanLikeNormalTransactions, db.etherscanLikeInternalTransactions, db.etherscanLikeTokenTransactions, async () => {
-    await db.etherscanLikeInternalTransactions.where({ uiAccountId: accountId }).delete();
-    await db.etherscanLikeNormalTransactions.where({ uiAccountId: accountId }).delete();
-    await db.etherscanLikeTokenTransactions.where({ uiAccountId: accountId }).delete();
-  });
-}
+const deleteAccount = async (accountId) => db.transaction('rw', db.accounts, db.etherscanLikeNormalTransactions, db.etherscanLikeInternalTransactions, db.etherscanLikeTokenTransactions, async () => {
+  await db.accounts.delete(accountId);
+  await db.etherscanLikeInternalTransactions.where({ uiAccountId: accountId }).delete();
+  await db.etherscanLikeNormalTransactions.where({ uiAccountId: accountId }).delete();
+  await db.etherscanLikeTokenTransactions.where({ uiAccountId: accountId }).delete();
+})
 
 const rawDataBundle = async (accountId) => {
   const internalTransactions = await db.etherscanLikeInternalTransactions.where({ uiAccountId: accountId }).toArray();

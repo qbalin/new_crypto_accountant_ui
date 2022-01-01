@@ -1,4 +1,3 @@
-// db.ts
 import Dexie, { Table } from 'dexie';
 import 'fake-indexeddb/auto';
 import { Account, accountIndices } from './account';
@@ -14,14 +13,23 @@ import { CoinbaseConversion, coinbaseConversionIndices } from './coinbase/models
 
 export class SubClassedDexie extends Dexie {
   accounts!: Table<Account>;
+
   kucoinLedgerEntries!: Table<KucoinLedgerEntry>;
+
   etherscanLikeNormalTransactions!: Table<EtherscanLikeNormalTransaction>;
+
   etherscanLikeInternalTransactions!: Table<EtherscanLikeInternalTransaction>;
+
   etherscanLikeTokenTransactions!: Table<EtherscanLikeTokenTransaction>;
+
   coinbaseAccounts!: Table<CoinbaseAccount>
+
   coinbaseFills!: Table<CoinbaseFill>
+
   coinbaseTransfers!: Table<CoinbaseTransfer>
+
   coinbaseProducts!: Table<CoinbaseProduct>
+
   coinbaseConversions!: Table<CoinbaseConversion>
 
   constructor() {

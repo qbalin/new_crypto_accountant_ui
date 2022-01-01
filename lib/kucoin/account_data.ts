@@ -22,9 +22,11 @@ const syncData = async (account: Account, since?: Date) => {
 
   for (let i = intervalsToFetch.length - 1; i >= 0; i -= 1) {
     const interval = intervalsToFetch[i];
+    // eslint-disable-next-line no-await-in-loop
     const results = await fetch(`/api/raw_data/${SupportedPlatform.KuCoin}?privateApiKey=${encodeURIComponent(account.privateApiKey)}&privateApiPassphrase=${encodeURIComponent(account.privateApiPassphrase)}&privateApiSecret=${encodeURIComponent(account.privateApiSecret)}&since=${interval.since}&until=${interval.until}`).then(res => res.json());
     const ledgerEntriesWithAccountId = results.ledgers.map(l => ({ ...l, uiAccountId: account.id }));
 
+    // eslint-disable-next-line no-await-in-loop
     await db.kucoinLedgerEntries.bulkAdd(ledgerEntriesWithAccountId).catch(error => {
       // Swallow duplicate entry error. BulkAdd won't rollback the succesful entries.
       if (!error.message.match(/Key already exists in the object store/)) {
@@ -34,18 +36,14 @@ const syncData = async (account: Account, since?: Date) => {
   }
 }
 
-const deleteAccount = async (accountId) => {
-  return db.transaction('rw', db.accounts, db.kucoinLedgerEntries, async () => {
+const deleteAccount = async (accountId) => db.transaction('rw', db.accounts, db.kucoinLedgerEntries, async () => {
     await db.accounts.delete(accountId);
     await db.kucoinLedgerEntries.where({ uiAccountId: accountId }).delete();
-  });
-}
+  })
 
-const purgeAccountData = async (accountId) => {
-  return db.transaction('rw', db.kucoinLedgerEntries, async () => {
+const purgeAccountData = async (accountId) => db.transaction('rw', db.kucoinLedgerEntries, async () => {
     await db.kucoinLedgerEntries.where({ uiAccountId: accountId }).delete();
-  });
-}
+  })
 
 const rawDataBundle = async (accountId) => {
   const ledgerEntries = await db.kucoinLedgerEntries.where({ uiAccountId: accountId }).toArray();

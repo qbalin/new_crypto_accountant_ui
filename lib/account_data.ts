@@ -11,17 +11,21 @@ import * as Coinbase from "./coinbase/account_data";
 const moduleFor = (account: Account) => {
   if (account.platformName === SupportedPlatform.KuCoin) {
     return Kucoin;
-  } else if (account.platformName === SupportedPlatform.Coinbase) {
-    return Coinbase;
-  } else if (account.blockchainName === SupportedBlockchain.Ethereum) {
-    return Ethereum;
-  } else if (account.blockchainName === SupportedBlockchain.Polygon) {
-    return Polygon;
-  } else if (account.blockchainName === SupportedBlockchain.BinanceSmartChain) {
-    return BinanceSmartChain;
-  } else {
-    throw new Error(`syncAccount unimplemented for ${account.blockchainName || account.platformName}`);
   }
+  if (account.platformName === SupportedPlatform.Coinbase) {
+    return Coinbase;
+  }
+  if (account.blockchainName === SupportedBlockchain.Ethereum) {
+    return Ethereum;
+  }
+  if (account.blockchainName === SupportedBlockchain.Polygon) {
+    return Polygon;
+  }
+  if (account.blockchainName === SupportedBlockchain.BinanceSmartChain) {
+    return BinanceSmartChain;
+  }
+    throw new Error(`syncAccount unimplemented for ${account.blockchainName || account.platformName}`);
+
 }
 
 export async function syncAccount(account: Account) {

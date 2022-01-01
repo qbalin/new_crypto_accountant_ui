@@ -1,8 +1,6 @@
-import { db } from "../lib/db";
 import { Button } from "react-bootstrap";
-import { useLiveQuery } from 'dexie-react-hooks/dist/dexie-react-hooks.mjs'
+import { useState } from "react"
 import { rawDataBundle } from "../lib/account_data";
-import { useState } from "react";
 
 const Taxes = () => {
   const [bundle, setBundle] = useState([]);
